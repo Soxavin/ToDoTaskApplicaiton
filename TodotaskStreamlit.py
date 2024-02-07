@@ -1,3 +1,5 @@
+# NOTE: IGNORE ERRORS IN TERMINAL WHEN RUNNING THE CODE, JUST TYPE: streamlit run TodotaskStreamlit.py
+
 # Import necessary libraries
 import streamlit as st
 
@@ -12,10 +14,17 @@ class LinkedList:
     def __init__(self):
         self.head = None
 
+    # Modified add_task function
     def add_task(self, task):
         new_node = Node(task)
-        new_node.next = self.head
-        self.head = new_node
+
+        if self.head is None:
+            self.head = new_node
+        else:
+            last_node = self.head
+            while last_node.next:
+                last_node = last_node.next
+            last_node.next = new_node
 
     def remove_task(self, task):
         current = self.head
@@ -41,12 +50,18 @@ class LinkedList:
 
         return tasks
 
+# Create or get the linked list from session state
+def get_linked_list():
+    if 'linked_list' not in st.session_state:
+        st.session_state.linked_list = LinkedList()
+    return st.session_state.linked_list
+
 # Create a Streamlit app
 def main():
     st.title("To-Do List App with Linked List")
 
     # Initialize a linked list
-    tasks_list = LinkedList()
+    tasks_list = get_linked_list()
 
     # Sidebar for adding tasks
     task_input = st.sidebar.text_input("Add Task:")
